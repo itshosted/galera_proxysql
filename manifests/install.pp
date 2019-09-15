@@ -9,16 +9,24 @@ class galera_proxysql::install (
 ) inherits galera_proxysql::params {
 
   $pip_pkgs = ['distro', 'multiping', 'pysystemd']
-
+  if $::galera_proxysql::params::manage_repo {
+    $pkg_require = Class['galera_proxysql::repo']
+  } else {
+    $pkg_require = undef
+  }
   $other_pkgs.each | $pkg | {
     unless defined(Package[$pkg]) {
-      package { $pkg: before => Package[$pip_pkgs]; }
+      package { $pkg:
+        before => Package[$pip_pkgs],
+        require => $pkg_require;
+      }
     }
   }
 
   unless defined(Package["Percona-XtraDB-Cluster-full-${percona_major_version}"]) {
     package { "Percona-XtraDB-Cluster-full-${percona_major_version}":
-      ensure => $percona_minor_version;
+      ensure  => $percona_minor_version,
+      require => $pkg_require;
     }
   }
 
