@@ -12,7 +12,8 @@ class galera_proxysql::firewall (
 ) inherits galera_proxysql::params {
 
   $trusted_networks.each | String $source | {
-    if $source =~ Stdlib::IP::Address::V6 { $provider = 'ip6tables' } else { $provider = 'iptables' }
+    # if $source =~ Stdlib::IP::Address::V6 { $provider = 'ip6tables' } else { $provider = 'iptables' }
+    $provider = 'iptables'
     firewall { "200 Allow inbound Galera ports 3306, 9200 from ${source} for ${provider}":
       chain    => 'INPUT',
       source   => $source,
