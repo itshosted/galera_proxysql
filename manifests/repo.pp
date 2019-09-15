@@ -6,10 +6,14 @@ class galera_proxysql::repo (
 ) inherits galera_proxysql::params {
 
   if $manage_repo {
-    # rpmkey { 'CD2EFD2A':
-    #   ensure => present,
-    #   source => 'http://www.percona.com/downloads/RPM-GPG-KEY-percona';
-    # }
+    rpmkey { 'CD2EFD2A':
+      ensure => present,
+      source => 'http://www.percona.com/downloads/RPM-GPG-KEY-percona';
+    }
+    rpmkey { '8507EFA5':
+      ensure => present,
+      source => 'https://repo.percona.com/yum/PERCONA-PACKAGING-KEY';
+    }
     yumrepo { 'percona':
       enabled    => '1',
       gpgcheck   => '1',
@@ -18,7 +22,10 @@ class galera_proxysql::repo (
       baseurl    => "http://repo.percona.com/release/\$releasever/RPMS/\$basearch",
       descr      => 'Percona',
       gpgkey     => 'http://www.percona.com/downloads/RPM-GPG-KEY-percona',
-      # require    => Rpmkey['CD2EFD2A'];
+      require    => [
+        Rpmkey['CD2EFD2A'],
+        Rpmkey['8507EFA5'],
+      ],
     }
   }
 

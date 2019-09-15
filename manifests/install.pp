@@ -17,7 +17,7 @@ class galera_proxysql::install (
   $other_pkgs.each | $pkg | {
     unless defined(Package[$pkg]) {
       package { $pkg:
-        before => Package[$pip_pkgs],
+        before  => Package[$pip_pkgs],
         require => $pkg_require;
       }
     }
